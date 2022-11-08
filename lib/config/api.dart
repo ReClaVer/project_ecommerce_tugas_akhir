@@ -1,7 +1,7 @@
 class Api {
   // static const _host = 'https://filemanager.ai';
-  static const _host = 'http://192.168.8.102/api_ecommerce';
-  // static const _host = 'http://sql204.epizy.com/filemanager.ai';
+  // static const _host = 'http://192.168.8.102/api_ecommerce';
+  static const _host = 'http://185.27.134.106/sql204.epizy.com/filemanager.ai';
   static const _hostCart = '$_host/cart';
   static const _hostOrder = '$_host/order';
   static const _hostApparel = '$_host/apparel';
