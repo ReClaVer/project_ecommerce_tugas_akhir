@@ -11,6 +11,8 @@ class Cart {
   String? description;
   String image;
   int quantity;
+  String color;
+  String size;
 
   Cart(
       {required this.colors,
@@ -24,6 +26,8 @@ class Cart {
       required this.quantity,
       required this.rating,
       required this.sizes,
+      required this.color,
+      required this.size,
       this.tags});
 
   factory Cart.fromJson(Map<String, dynamic> json) => Cart(
@@ -38,12 +42,16 @@ class Cart {
       rating: double.parse(json['rating']),
       tags: json['tags'].toString().split(', '),
       sizes: json['sizes'].toString().split(', '),
-      description: json['description']);
+      description: json['description'],
+      color: json['color'],
+      size: json['size']);
 
   Map<String, dynamic> toJson() => {
         'id_cart': idCart,
         'id_shoes': idApparel,
         'id_user': idUser,
-        'quantity': quantity
+        'quantity': quantity,
+        'color': color,
+        'size': size
       };
 }

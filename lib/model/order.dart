@@ -35,14 +35,14 @@ class Order {
       dateTime: DateTime.parse(json['date_time']));
 
   Map<String, dynamic> toJson(String imageBase64) => {
-        'delivery': this.delivery,
-        'id_order': this.idOrder,
-        'id_user': this.idUser,
-        'image': this.image,
+        'delivery': delivery,
+        'id_order': idOrder.toString(),
+        'id_user': idUser.toString(),
+        'image': image,
         'image_file': imageBase64,
-        'list_shop': this.listShop,
-        'payment': this.payment,
-        'total': this.total,
-        'note': this.note
+        'list_shop': listShop,
+        'payment': payment,
+        'total': total.toStringAsFixed(2),
+        'note': note ?? ''
       };
 }

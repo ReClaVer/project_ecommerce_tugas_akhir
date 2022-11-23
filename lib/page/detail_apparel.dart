@@ -83,6 +83,8 @@ class _DetaiApparelState extends State<DetaiApparel> {
         'id_user': _CUser.user.idUser.toString(),
         'id_apparel': widget.apparel!.idApparel.toString(),
         'quantity': _CDetailApparel.quantity.toString(),
+        'size': widget.apparel!.sizes[_CDetailApparel.size],
+        'color': widget.apparel!.colors[_CDetailApparel.color]
       });
 
       if (response.statusCode == 200) {

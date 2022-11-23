@@ -330,7 +330,6 @@ class FragmentHome extends StatelessWidget {
                       apparel: apparel,
                     )),
                     child: Container(
-                      height: 180,
                       width: 200,
                       margin: EdgeInsets.fromLTRB(
                         index == 0 ? 16 : 8,
