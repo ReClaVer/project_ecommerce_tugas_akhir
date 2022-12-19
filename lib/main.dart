@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'config/splashscreen.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:project_ecommerce_tugas_akhir/config/splashscreen.dart';
 import 'package:project_ecommerce_tugas_akhir/event/event_pref.dart';
 import 'package:project_ecommerce_tugas_akhir/page/auth/login.dart';
 
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
               if (snapshot.data == null) return Login();
               return Dashboard();
             })
-        // home: TestSaja(),
+        // home: Splashscreen(),
         );
   }
 }

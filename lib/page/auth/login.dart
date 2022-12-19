@@ -88,23 +88,30 @@ class Login extends StatelessWidget {
           ),
           Center(
             child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(width: 3, color: Asset.colorAccent)),
-              child: const Icon(
-                Icons.account_circle,
-                size: 150,
-                color: Asset.colorAccent,
-              ),
-            ),
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(width: 3, color: Asset.colorBorder)),
+                child: Image.asset(
+                  'assets/icons/bag.png',
+                  fit: BoxFit.fill,
+                  scale: 3,
+                )
+                // child: const Icon(
+                //   Icons.account_circle,
+                //   size: 150,
+                //   color: Asset.colorAccent,
+                // ),
+                ),
           ),
-          const Text(
-            'LOGIN',
-            style: TextStyle(
-                fontSize: 24,
-                color: Asset.colorAccent,
-                fontWeight: FontWeight.w500),
+          const Center(
+            child: Text(
+              'LOGIN',
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Asset.colorAccent,
+                  fontWeight: FontWeight.w500),
+            ),
           )
         ],
       ),
@@ -142,7 +149,7 @@ class Login extends StatelessWidget {
                             Icons.email,
                             color: Asset.colorPrimary,
                           ),
-                          hintText: 'email@gmail.com',
+                          hintText: 'Email',
                           border: styleBorder(),
                           enabledBorder: styleBorder(),
                           focusedBorder: styleBorder(),
@@ -163,7 +170,7 @@ class Login extends StatelessWidget {
                             Icons.vpn_key,
                             color: Asset.colorPrimary,
                           ),
-                          hintText: 'password',
+                          hintText: 'Password',
                           suffixIcon: Obx(
                             (() => GestureDetector(
                                   onTap: () {
@@ -204,7 +211,8 @@ class Login extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                         child: Text(
                           'LOGIN',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: TextStyle(
+                              color: Asset.colorWhiteText, fontSize: 16),
                         ),
                       ),
                     ),
@@ -237,6 +245,6 @@ class Login extends StatelessWidget {
   InputBorder styleBorder() {
     return OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: const BorderSide(width: 0, color: Asset.colorAccent));
+        borderSide: const BorderSide(width: 1, color: Asset.colorBorder));
   }
 }

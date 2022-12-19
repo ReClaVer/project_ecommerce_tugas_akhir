@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 // }
 
 class Asset {
-  static const colorBackground = Colors.black45;
-  static const colorPrimary = Colors.black;
-  static const colorAccent = Colors.black12;
-  static const colorTextTile = Colors.black38;
+  static const colorBackground = Colors.lightBlueAccent;
+  static const colorPrimary = Colors.red;
+  static const colorAccent = Colors.white;
+  static const colorTextTile = Colors.black;
+  static const colorBorder = Colors.yellow;
+  static const colorWhiteText = Colors.white;
+  static const colorBlackText = Colors.black;
   static const imageBox = 'assets/images/fashion.png';
 }

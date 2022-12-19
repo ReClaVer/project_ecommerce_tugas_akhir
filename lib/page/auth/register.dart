@@ -69,7 +69,7 @@ class Register extends StatelessWidget {
       backgroundColor: Asset.colorBackground,
       body: LayoutBuilder(builder: (context, constraints) {
         return ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.minHeight),
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -102,26 +102,31 @@ class Register extends StatelessWidget {
           ),
           Center(
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                shape: BoxShape.circle,
-                border: Border.all(width: 3, color: Asset.colorAccent),
-              ),
-              child: const Icon(
-                Icons.account_circle,
-                size: 150,
-                color: Asset.colorAccent,
-              ),
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(width: 3, color: Asset.colorBorder)),
+                child: Image.asset(
+                  'assets/icons/bag.png',
+                  fit: BoxFit.fill,
+                  scale: 3,
+                )
+                // child: const Icon(
+                //   Icons.account_circle,
+                //   size: 150,
+                //   color: Asset.colorAccent,
+                // ),
+                ),
+          ),
+          const Center(
+            child: Text(
+              'REGISTER',
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Asset.colorAccent,
+                  fontWeight: FontWeight.w500),
             ),
           ),
-          const Text(
-            'REGISTER',
-            style: TextStyle(
-              fontSize: 24,
-              color: Asset.colorAccent,
-              fontWeight: FontWeight.w500,
-            ),
-          )
         ],
       ),
     );
@@ -202,7 +207,7 @@ class Register extends StatelessWidget {
                           color: Asset.colorPrimary,
                         ),
                         hintText: 'Password',
-                        suffixIcon: Obx(() => GestureDetector(
+                        suffixIcon: Obx((() => GestureDetector(
                             onTap: () {
                               _obsecure.value = !_obsecure.value;
                             },
@@ -211,7 +216,7 @@ class Register extends StatelessWidget {
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                               color: Asset.colorPrimary,
-                            ))),
+                            )))),
                         border: styleBorder(),
                         enabledBorder: styleBorder(),
                         focusedBorder: styleBorder(),
@@ -239,7 +244,7 @@ class Register extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   child: Text(
                     'Register',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(color: Asset.colorWhiteText, fontSize: 16),
                   ),
                 ),
               ),
@@ -463,6 +468,6 @@ class Register extends StatelessWidget {
   InputBorder styleBorder() {
     return OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: const BorderSide(width: 0, color: Asset.colorAccent));
+        borderSide: const BorderSide(width: 1, color: Asset.colorBorder));
   }
 }

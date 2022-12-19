@@ -3,7 +3,7 @@ import 'package:project_ecommerce_tugas_akhir/model/user.dart';
 import 'package:get/get.dart';
 
 class CUser extends GetxController {
-  Rx<User> _user = User(0, '', '', '').obs;
+  final Rx<User> _user = User(0, '', '', '').obs;
 
   User get user => _user.value;
 
