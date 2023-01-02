@@ -64,8 +64,8 @@ class Confirmation extends StatelessWidget {
         idUser: _cUser.user.idUser,
         image: imageName,
         listShop: stringListShop,
-        // payment: payment,
         payment: 1,
+        note: note,
         total: total);
 
     try {

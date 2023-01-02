@@ -90,8 +90,10 @@ class _DetaiApparelState extends State<DetaiApparel> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         if (responseBody['success']) {
+          // ignore: use_build_context_synchronously
           infoMessage.snackbar(context, 'Apparel has added to cart');
         } else {
+          // ignore: use_build_context_synchronously
           infoMessage.snackbar(context, 'Failed add apparel to cart');
         }
       }
@@ -409,15 +411,15 @@ class _DetaiApparelState extends State<DetaiApparel> {
               child: Row(
                 children: const [
                   Icon(
-                    Icons.description,
-                    color: Colors.black,
+                    Icons.description_outlined,
+                    color: Asset.colorPrimary,
                   ),
                   Text(
                     "Description",
                     style: TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18),
                   ),
                 ],
               ),

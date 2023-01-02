@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
+import 'package:project_ecommerce_tugas_akhir/page/list_cart_restore.dart';
 import 'config/splashscreen.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:project_ecommerce_tugas_akhir/config/splashscreen.dart';
@@ -22,15 +24,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        // home: Dashboard(),
-        home: FutureBuilder(
-            future: EventPref.getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.data == null) return Login();
-              return Dashboard();
-            })
-        // home: Splashscreen(),
-        );
+      debugShowCheckedModeBanner: false,
+      // home: Dashboard(),
+      // home: FutureBuilder(
+      //     future: EventPref.getUser(),
+      //     builder: (context, snapshot) {
+      //       if (snapshot.data == null) return Login();
+      //       return Dashboard();
+      //     })
+      // home: Splashscreen(),
+      home: ListCartRestore(),
+    );
   }
 }

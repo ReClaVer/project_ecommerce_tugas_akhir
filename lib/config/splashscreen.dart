@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:project_ecommerce_tugas_akhir/page/auth/login.dart';
+import 'package:project_ecommerce_tugas_akhir/page/dashboard/dashboard.dart';
 
 import 'asset.dart';
 
@@ -22,7 +23,7 @@ class _SplashscreenState extends State<Splashscreen> {
     var duration = const Duration(seconds: 5);
     return Timer(duration, () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
-        return Login();
+        return Dashboard();
       }));
     });
   }

@@ -362,7 +362,7 @@ class _ListCartState extends State<ListCart> {
                   ),
                 );
               })
-          : Center(
+          : const Center(
               child: Text('empty'),
             )),
       bottomNavigationBar: GetBuilder(
@@ -394,19 +394,19 @@ class _ListCartState extends State<ListCart> {
                           '\Rp ' + _cListCart.total.toStringAsFixed(2),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20,
                               color: Asset.colorPrimary,
                               fontWeight: FontWeight.bold),
                         )),
                     const Spacer(),
                     Material(
-                      color: _cListCart.selected.length > 0
+                      color: _cListCart.selected.isNotEmpty
                           ? Asset.colorPrimary
                           : Colors.grey,
                       borderRadius: BorderRadius.circular(30),
                       child: InkWell(
-                        onTap: _cListCart.selected.length > 0
+                        onTap: _cListCart.selected.isNotEmpty
                             ? () => Get.to(OrderNow(
                                   listIdCart: _cListCart.selected,
                                   listShop: getListShop(),
