@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:project_ecommerce_tugas_akhir/config/asset.dart';
 import 'package:project_ecommerce_tugas_akhir/page/detail_apparel.dart';
 import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
+import 'package:project_ecommerce_tugas_akhir/page/list_cart_restore.dart';
 import 'package:project_ecommerce_tugas_akhir/page/search_apparel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -70,7 +71,7 @@ class FragmentHome extends StatelessWidget {
                       fontSize: 30),
                 ),
                 IconButton(
-                    onPressed: () => Get.to(ListCart()),
+                    onPressed: () => Get.to(ListCartRestore()),
                     icon: const Icon(
                       Icons.shopping_cart,
                       color: Asset.colorTextTile,

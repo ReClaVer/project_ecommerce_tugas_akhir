@@ -178,193 +178,197 @@ class _ListCartState extends State<ListCart> {
                   : const SizedBox())
         ],
       ),
-      body: Obx(() => _cListCart.list.length > 0
-          ? ListView.builder(
-              // itemCount: 10,
-              itemCount: _cListCart.list.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                Cart cart = _cListCart.list[index];
-                Apparel apparel = Apparel(
-                  colors: cart.colors!,
-                  idApparel: cart.idApparel,
-                  image: cart.image,
-                  name: cart.name,
-                  price: cart.price,
-                  rating: cart.rating,
-                  sizes: cart.sizes!,
-                  description: cart.description,
-                  tags: cart.tags,
-                );
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    children: [
-                      GetBuilder(
-                          init: CListCart(),
-                          builder: (_) {
-                            return IconButton(
-                                onPressed: () {
-                                  if (_cListCart.selected
-                                      .contains(cart.idCart)) {
-                                    _cListCart.deleteSelected(cart.idCart);
-                                  } else {
-                                    _cListCart.addSelected(cart.idCart);
-                                  }
-                                  countTotal();
-                                },
-                                icon: Icon(
-                                    _cListCart.selected.contains(cart.idCart)
-                                        ? Icons.check_box
-                                        : Icons.check_box_outline_blank));
-                          }),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => Get.to(DetaiApparel(
-                            apparel: apparel,
-                          ))!
-                              .then((value) => getList()),
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(
-                              0,
-                              index == 0 ? 16 : 8,
-                              16,
-                              index == _cListCart.list.length - 1 ? 16 : 8,
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      offset: Offset(0, 0),
-                                      blurRadius: 6,
-                                      color: Colors.black26),
-                                ]),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    bottomLeft: Radius.circular(20),
-                                  ),
-                                  child: FadeInImage(
-                                    height: 90,
-                                    width: 80,
-                                    fit: BoxFit.cover,
-                                    placeholder:
-                                        const AssetImage(Asset.imageBox),
-                                    image: NetworkImage(cart.image),
-                                    imageErrorBuilder:
-                                        (context, error, stackTrace) {
-                                      return Container(
-                                        height: 90,
-                                        width: 80,
-                                        alignment: Alignment.center,
-                                        child: const Icon(Icons.broken_image),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          cart.name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontSize: 8,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(
-                                          height: 8,
-                                        ),
-                                        Text(
-                                          '${cart.color}, ${cart.size}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontSize: 8,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(
-                                          height: 8,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                                onTap: () {
-                                                  if (cart.quantity - 1 >= 1) {
-                                                    updateCart(cart.idCart,
-                                                        cart.quantity - 1);
-                                                  }
-                                                },
-                                                child: const Icon(
-                                                  Icons
-                                                      .remove_circle_outline_outlined,
-                                                  size: 30,
-                                                )),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            Text(
-                                              cart.quantity.toString(),
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Asset.colorPrimary,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            GestureDetector(
-                                                onTap: () {
-                                                  updateCart(cart.idCart,
-                                                      cart.quantity + 1);
-                                                },
-                                                child: const Icon(
-                                                  Icons
-                                                      .add_circle_outline_rounded,
-                                                  size: 30,
-                                                )),
-                                            const Spacer(),
-                                            Text(
-                                              '\Rp ${cart.price} ',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Asset.colorPrimary,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              width: 16,
-                                            )
-                                          ],
-                                        )
-                                      ],
+      body: Obx(
+        () => _cListCart.list.length > 0
+            ? ListView.builder(
+                // itemCount: 10,
+                itemCount: _cListCart.list.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  Cart cart = _cListCart.list[index];
+                  Apparel apparel = Apparel(
+                    colors: cart.colors!,
+                    idApparel: cart.idApparel,
+                    image: cart.image,
+                    name: cart.name,
+                    price: cart.price,
+                    rating: cart.rating,
+                    sizes: cart.sizes!,
+                    description: cart.description,
+                    tags: cart.tags,
+                  );
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      children: [
+                        GetBuilder(
+                            init: CListCart(),
+                            builder: (_) {
+                              return IconButton(
+                                  onPressed: () {
+                                    if (_cListCart.selected
+                                        .contains(cart.idCart)) {
+                                      _cListCart.deleteSelected(cart.idCart);
+                                    } else {
+                                      _cListCart.addSelected(cart.idCart);
+                                    }
+                                    countTotal();
+                                  },
+                                  icon: Icon(
+                                      _cListCart.selected.contains(cart.idCart)
+                                          ? Icons.check_box
+                                          : Icons.check_box_outline_blank));
+                            }),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Get.to(DetaiApparel(
+                              apparel: apparel,
+                            ))!
+                                .then((value) => getList()),
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(
+                                0,
+                                index == 0 ? 16 : 8,
+                                16,
+                                index == _cListCart.list.length - 1 ? 16 : 8,
+                              ),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        offset: Offset(0, 0),
+                                        blurRadius: 6,
+                                        color: Colors.black26),
+                                  ]),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                    ),
+                                    child: FadeInImage(
+                                      height: 90,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          const AssetImage(Asset.imageBox),
+                                      image: NetworkImage(cart.image),
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          height: 90,
+                                          width: 80,
+                                          alignment: Alignment.center,
+                                          child: const Icon(Icons.broken_image),
+                                        );
+                                      },
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            cart.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            '${cart.color}, ${cart.size}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    if (cart.quantity - 1 >=
+                                                        1) {
+                                                      updateCart(cart.idCart,
+                                                          cart.quantity - 1);
+                                                    }
+                                                  },
+                                                  child: const Icon(
+                                                    Icons
+                                                        .remove_circle_outline_outlined,
+                                                    size: 30,
+                                                  )),
+                                              const SizedBox(
+                                                width: 8,
+                                              ),
+                                              Text(
+                                                cart.quantity.toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Asset.colorPrimary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 8,
+                                              ),
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    updateCart(cart.idCart,
+                                                        cart.quantity + 1);
+                                                  },
+                                                  child: const Icon(
+                                                    Icons
+                                                        .add_circle_outline_rounded,
+                                                    size: 30,
+                                                  )),
+                                              const Spacer(),
+                                              Text(
+                                                '\Rp ${cart.price} ',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Asset.colorPrimary,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(
+                                                width: 16,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              })
-          : const Center(
-              child: Text('empty'),
-            )),
+                      ],
+                    ),
+                  );
+                })
+            : const Center(
+                child: Text('empty'),
+              ),
+      ),
       bottomNavigationBar: GetBuilder(
           init: CListCart(),
           builder: (_) => Container(

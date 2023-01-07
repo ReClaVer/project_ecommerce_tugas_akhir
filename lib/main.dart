@@ -24,16 +24,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      // home: Dashboard(),
-      // home: FutureBuilder(
-      //     future: EventPref.getUser(),
-      //     builder: (context, snapshot) {
-      //       if (snapshot.data == null) return Login();
-      //       return Dashboard();
-      //     })
-      // home: Splashscreen(),
-      home: ListCartRestore(),
-    );
+        debugShowCheckedModeBanner: false,
+        // home: Dashboard(),
+        home: FutureBuilder(
+            future: EventPref.getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) return Login();
+              return Dashboard();
+            })
+        // home: Splashscreen(),
+        // home: ListCartRestore(),
+        );
   }
 }
