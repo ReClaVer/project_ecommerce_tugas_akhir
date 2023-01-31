@@ -3,7 +3,7 @@ class Order {
   int idUser;
   String listShop;
   String delivery;
-  double payment;
+  String payment;
   String? note;
   double total;
   String image;

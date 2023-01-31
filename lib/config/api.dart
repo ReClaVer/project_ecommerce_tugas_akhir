@@ -1,5 +1,5 @@
 class Api {
-  static const _host = 'http://192.168.1.4/api_ecommerce';
+  static const _host = 'http://192.168.1.6/api_ecommerce';
   // static const _host = 'https://distroapp.epizy.com';
   // static const _host = 'http://sql204.epizy.com';
   static const _hostCart = '$_host/cart';
@@ -7,6 +7,8 @@ class Api {
   static const _hostApparel = '$_host/apparel';
   static const _hostUser = '$_host/user';
   static const _hostWishlist = '$_host/wishlist';
+  static const hostImage = '$_host/images/';
+
 
   //cart
   static const addCart = '$_hostCart/add.php';

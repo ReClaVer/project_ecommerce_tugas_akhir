@@ -71,7 +71,7 @@ class FragmentHome extends StatelessWidget {
                       fontSize: 30),
                 ),
                 IconButton(
-                    onPressed: () => Get.to(ListCartRestore()),
+                    onPressed: () => Get.to(ListCart()),
                     icon: const Icon(
                       Icons.shopping_cart,
                       color: Asset.colorTextTile,
