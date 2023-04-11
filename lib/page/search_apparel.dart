@@ -53,7 +53,7 @@ class _SearchApparelState extends State<SearchApparel> {
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: Asset.colorPrimary,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         // leading: ,
         titleSpacing: 0,
         title: buildSearch(),
