@@ -30,8 +30,8 @@ class Dashboard extends StatelessWidget {
       'label': 'Whislist',
     },
     {
-      'icon_on': FontAwesomeIcons.boxOpen,
-      'icon_off': FontAwesomeIcons.box,
+      'icon_on': Icons.add_box,
+      'icon_off': Icons.add_box_outlined,
       'label': 'Order',
     },
     {

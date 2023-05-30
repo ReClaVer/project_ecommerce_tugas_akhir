@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_ecommerce_tugas_akhir/controller/c_list_cart.dart';
 import 'package:project_ecommerce_tugas_akhir/controller/c_user.dart';
-import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
 
 import '../config/api.dart';
 import '../config/asset.dart';
