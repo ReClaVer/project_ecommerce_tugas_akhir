@@ -27,15 +27,15 @@ class _ListCartState extends State<ListCart> {
 
   List<Map<String, dynamic>> getListShop() {
     List<Map<String, dynamic>> listShop = [];
-    if (_cListCart.selected.length > 0) {
+    if (_cListCart.selected.isNotEmpty) {
       _cListCart.list.forEach((cart) {
         if (_cListCart.selected.contains(cart.idCart)) {
           Map<String, dynamic> item = {
             'id_apparel': cart.idApparel,
             'image': cart.image,
-            'name': cart.image,
-            'color': cart.color,
-            'size': cart.size,
+            'name': cart.name,
+            'color': cart.colors, // Ambil warna pertama dari daftar warna
+            'size': cart.sizes, // Ambil ukuran pertama dari daftar ukuran
             'quantity': cart.quantity,
             'item_total': cart.price * cart.quantity
           };
@@ -47,18 +47,19 @@ class _ListCartState extends State<ListCart> {
   }
 
   void countTotal() {
-    _cListCart.setTotal(0.0);
-    if (_cListCart.selected.length > 0) {
+    double total = 0.0;
+    if (_cListCart.selected.isNotEmpty) {
       _cListCart.list.forEach((cart) {
         if (_cListCart.selected.contains(cart.idCart)) {
           double itemTotal = cart.price * cart.quantity;
-          _cListCart.setTotal(_cListCart.total + itemTotal);
+          total += itemTotal;
         }
       });
     }
+    _cListCart.setTotal(total);
   }
 
-  void getList() async {
+  Future<void> getList() async {
     List<Cart> listCart = [];
     try {
       var response = await http.post(Uri.parse(Api.getCart), body: {
@@ -79,8 +80,7 @@ class _ListCartState extends State<ListCart> {
     countTotal();
   }
 
-  void updateCart(int idCart, int newQuantity) async {
-    List<Cart> listCart = [];
+  Future<void> updateCart(int idCart, int newQuantity) async {
     try {
       var response = await http.post(Uri.parse(Api.updateCart), body: {
         'id_cart': idCart.toString(),
@@ -89,7 +89,7 @@ class _ListCartState extends State<ListCart> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         if (responseBody['success']) {
-          getList();
+          await getList();
         }
       }
     } catch (e) {
@@ -97,8 +97,7 @@ class _ListCartState extends State<ListCart> {
     }
   }
 
-  void deleteCart(int idCart) async {
-    List<Cart> listCart = [];
+  Future<void> deleteCart(int idCart) async {
     try {
       var response = await http.post(Uri.parse(Api.deleteCart), body: {
         'id_cart': idCart.toString(),
@@ -106,7 +105,7 @@ class _ListCartState extends State<ListCart> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         if (responseBody['success']) {
-          getList();
+          await getList();
         }
       }
     } catch (e) {
@@ -116,9 +115,10 @@ class _ListCartState extends State<ListCart> {
 
   @override
   void initState() {
-    getList();
     super.initState();
+    getList();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +285,7 @@ class _ListCartState extends State<ListCart> {
                                             height: 8,
                                           ),
                                           Text(
-                                            '${cart.color}, ${cart.size}',
+                                            '${cart.colors}, ${cart.sizes}',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(

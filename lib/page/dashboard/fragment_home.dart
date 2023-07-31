@@ -277,7 +277,7 @@ class FragmentHome extends StatelessWidget {
                                       height: 8,
                                     ),
                                     Text(
-                                      'Rp ${apparel.price}',
+                                      'Rp.${apparel.price}',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
@@ -372,6 +372,7 @@ class FragmentHome extends StatelessWidget {
                               },
                             ),
                           ),
+                          
                           Expanded(
                             child: Padding(
                               padding:
@@ -384,28 +385,59 @@ class FragmentHome extends StatelessWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(
-                                    height: 8,
+                                    height: 4,
                                   ),
-                                  Text(
-                                    '${apparel.tags!.join(', ')}',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Asset.colorPrimary,
+                                  // Row(
+                                  //     children: [
+                                  //       RatingBar.builder(
+                                  //         initialRating: apparel.rating,
+                                  //         minRating: 1,
+                                  //         direction: Axis.horizontal,
+                                  //         allowHalfRating: true,
+                                  //         itemCount: 5,
+                                  //         itemPadding:
+                                  //             const EdgeInsets.symmetric(
+                                  //                 horizontal: 0),
+                                  //         itemBuilder: (context, _) =>
+                                  //             const Icon(
+                                  //           Icons.star,
+                                  //           color: Colors.amber,
+                                  //         ),
+                                  //         onRatingUpdate: (rating) {},
+                                  //         ignoreGestures: true,
+                                  //         itemSize: 20,
+                                  //         unratedColor: Colors.grey,
+                                  //       ),
+                                  //       const SizedBox(
+                                  //         width: 8,
+                                  //       ),
+                                  //       Text('(${apparel.rating})')
+                                  //     ],
+                                  //   ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: Text(
+                                    
+                                      '${apparel.tags!.join(', ')}',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Asset.colorPrimary,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(
                                     height: 4,
                                   ),
                                   Text(
-                                    'Rp ${apparel.price}',
+                                    'Rp.${apparel.price}',
                                     style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 15,
                                         color: Asset.colorPrimary,
                                         fontWeight: FontWeight.bold),
                                   ),
