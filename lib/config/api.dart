@@ -1,5 +1,5 @@
 class Api {
-  static const _host = 'http://10.234.215.202/api_ecommerce';
+  static const _host = 'http://192.168.8.102/api_ecommerce';
   // static const _host = 'https://distroapp.epizy.com';
   // static const _host = 'http://sql204.epizy.com';
   static const _hostCart = '$_host/cart';
