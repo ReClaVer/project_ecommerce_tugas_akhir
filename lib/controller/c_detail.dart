@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class CDetailApparel extends GetxController {
-  RxBool _isWishlist = false.obs;
-  RxInt _quantity = 1.obs;
-  RxInt _size = 0.obs;
-  RxInt _color = 0.obs;
+  final RxBool _isWishlist = false.obs;
+  final RxInt _quantity = 1.obs;
+  final RxInt _size = 0.obs;
+  final RxInt _color = 0.obs;
 
   bool get isWishlist => _isWishlist.value;
   int get quantity => _quantity.value;

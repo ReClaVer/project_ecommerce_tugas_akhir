@@ -17,6 +17,8 @@ import '../config/asset.dart';
 import '../model/cart.dart';
 
 class ListCart extends StatefulWidget {
+  const ListCart({Key? key}) : super(key: key);
+
   @override
   State<ListCart> createState() => _ListCartState();
 }
@@ -34,8 +36,7 @@ class _ListCartState extends State<ListCart> {
             'id_apparel': cart.idApparel,
             'image': cart.image,
             'name': cart.name,
-            'color': cart.colors, // Ambil warna pertama dari daftar warna
-            'size': cart.sizes, // Ambil ukuran pertama dari daftar ukuran
+            'size': cart.size, // Ambil ukuran pertama dari daftar ukuran
             'quantity': cart.quantity,
             'item_total': cart.price * cart.quantity
           };
@@ -50,7 +51,8 @@ class _ListCartState extends State<ListCart> {
     double total = 0.0;
     if (_cListCart.selected.isNotEmpty) {
       _cListCart.list.forEach((cart) {
-        if (_cListCart.selected.contains(cart.idCart)) {
+        if (_cListCart.selected.contains(
+            _cListCart.dataListCart.value.data![int.parse('id_cart')])) {
           double itemTotal = cart.price * cart.quantity;
           total += itemTotal;
         }
@@ -80,6 +82,16 @@ class _ListCartState extends State<ListCart> {
     countTotal();
   }
 
+  void toggleSelected(int itemId) {
+    if (_cListCart.selected.contains(itemId)) {
+      _cListCart.selected.remove(itemId);
+      _cListCart.update();
+    } else {
+      _cListCart.selected.add(itemId);
+      _cListCart.update();
+    }
+  }
+
   Future<void> updateCart(int idCart, int newQuantity) async {
     try {
       var response = await http.post(Uri.parse(Api.updateCart), body: {
@@ -104,8 +116,9 @@ class _ListCartState extends State<ListCart> {
       });
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
+
         if (responseBody['success']) {
-          await getList();
+          await _cListCart.fecthListCart();
         }
       }
     } catch (e) {
@@ -119,55 +132,40 @@ class _ListCartState extends State<ListCart> {
     getList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Asset.colorPrimary,
         titleSpacing: 0,
-        title: const Text('Cart'),
+        title: const Padding(
+          padding: EdgeInsets.only(left: 0),
+          child: Text('Keranjang'),
+        ),
         actions: [
-          Obx(
-            () => IconButton(
-                onPressed: () {
-                  _cListCart.setIsSelectedAll();
-                  _cListCart.selected.clear();
-
-                  if (_cListCart.isSelectedAll) {
-                    _cListCart.list.forEach((e) {
-                      _cListCart.addSelected(e.idCart);
-                    });
-                  }
-                  countTotal();
-                },
-                icon: Icon(
-                  _cListCart.isSelectedAll
-                      ? Icons.check_box
-                      : Icons.check_box_outline_blank_rounded,
-                )),
-          ),
           GetBuilder(
               init: CListCart(),
-              builder: (_) => _cListCart.selected.length > 0
+              builder: (_) => _cListCart.selected.length != 0
                   ? IconButton(
                       onPressed: () async {
                         var response = await Get.dialog(AlertDialog(
-                          title: const Text('Delete'),
-                          content:
-                              const Text('You sure to delete selected cart?'),
+                          title: const Text('Hapus'),
+                          content: const Text(
+                              'Apakah benar menghapus produk dari keranjang?'),
                           actions: [
                             TextButton(
                                 onPressed: () => Get.back(),
-                                child: const Text('no')),
+                                child: const Text('tidak')),
                             TextButton(
-                                onPressed: () => Get.back(result: 'yes'),
-                                child: const Text('yes'))
+                                onPressed: () => Get.back(result: 'ya'),
+                                child: const Text('ya'))
                           ],
                         ));
-                        if (response == 'yes') {
-                          _cListCart.selected.forEach((idCart) {
+                        if (response == 'ya') {
+                          _cListCart.selected.forEach((idCart) async {
                             deleteCart(idCart);
+                            await _cListCart.fecthListCart();
+                            _cListCart.update();
                           });
                         }
                         countTotal();
@@ -178,196 +176,199 @@ class _ListCartState extends State<ListCart> {
                   : const SizedBox())
         ],
       ),
-      body: Obx(
-        () => _cListCart.list.length > 0
-            ? ListView.builder(
-                // itemCount: 10,
-                itemCount: _cListCart.list.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  Cart cart = _cListCart.list[index];
-                  Apparel apparel = Apparel(
-                    colors: cart.colors!,
-                    idApparel: cart.idApparel,
-                    image: cart.image,
-                    name: cart.name,
-                    price: cart.price,
-                    rating: cart.rating,
-                    sizes: cart.sizes!,
-                    description: cart.description,
-                    tags: cart.tags,
-                  );
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: [
-                        GetBuilder(
-                            init: CListCart(),
-                            builder: (_) {
-                              return IconButton(
-                                  onPressed: () {
-                                    if (_cListCart.selected
-                                        .contains(cart.idCart)) {
-                                      _cListCart.deleteSelected(cart.idCart);
-                                    } else {
-                                      _cListCart.addSelected(cart.idCart);
-                                    }
-                                    countTotal();
-                                  },
-                                  icon: Icon(
-                                      _cListCart.selected.contains(cart.idCart)
-                                          ? Icons.check_box
-                                          : Icons.check_box_outline_blank));
-                            }),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => Get.to(DetaiApparel(
-                              apparel: apparel,
-                            ))!
-                                .then((value) => getList()),
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(
-                                0,
-                                index == 0 ? 16 : 8,
-                                16,
-                                index == _cListCart.list.length - 1 ? 16 : 8,
-                              ),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        offset: Offset(0, 0),
-                                        blurRadius: 6,
-                                        color: Colors.black26),
-                                  ]),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      bottomLeft: Radius.circular(20),
-                                    ),
-                                    child: FadeInImage(
-                                      height: 90,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                      placeholder:
-                                          const AssetImage(Asset.imageBox),
-                                      image: NetworkImage(cart.image),
-                                      imageErrorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Container(
-                                          height: 90,
-                                          width: 80,
-                                          alignment: Alignment.center,
-                                          child: const Icon(Icons.broken_image),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            cart.name,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontSize: 8,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            '${cart.colors}, ${cart.sizes}',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontSize: 8,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    if (cart.quantity - 1 >=
-                                                        1) {
-                                                      updateCart(cart.idCart,
-                                                          cart.quantity - 1);
-                                                    }
-                                                  },
-                                                  child: const Icon(
-                                                    Icons
-                                                        .remove_circle_outline_outlined,
-                                                    size: 30,
-                                                  )),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Text(
-                                                cart.quantity.toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Asset.colorPrimary,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    updateCart(cart.idCart,
-                                                        cart.quantity + 1);
-                                                  },
-                                                  child: const Icon(
-                                                    Icons
-                                                        .add_circle_outline_rounded,
-                                                    size: 30,
-                                                  )),
-                                              const Spacer(),
-                                              Text(
-                                                '\Rp ${cart.price} ',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Asset.colorPrimary,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(
-                                                width: 16,
-                                              )
-                                            ],
-                                          )
-                                        ],
+      body: RefreshIndicator(
+        onRefresh: _cListCart.fecthListCart,
+        child: Obx(
+          (() {
+            if (_cListCart.dataListCart.value.success == true) {
+              if (_cListCart.dataListCart.value.data!.isEmpty) {
+                return const Center(
+                  child: Text('Empty'),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: _cListCart.dataListCart.value.data!.length,
+                  itemBuilder: (context, index) {
+                    var dataCart = _cListCart.dataListCart.value.data![index];
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              
+                              setState(() {
+                                toggleSelected(int.parse(dataCart.idCart!));
+                                _cListCart.calculateTotalPrice();
+                                print("Selected items: ${_cListCart.selected}");
+                              });
+                              
+                            },
+                            icon: _cListCart.selected
+                                    .contains(int.parse(dataCart.idCart!))
+                                ? const Icon(Icons.check_box)
+                                : const Icon(Icons.check_box_outline_blank),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              //KODE PERBAIKAN
+                              // onTap: () async {
+                              //   if (dataCart.idApparel != null) {
+                              //     // Misalkan Anda memiliki sebuah fungsi yang dapat mengambil data Apparel
+                              //     // berdasarkan idApparel dari suatu sumber data, misalnya dari API atau database.
+                              //     Apparel? selectedApparel =
+                              //         await fetchApparelById(dataCart.idApparel);
+
+                              //     if (selectedApparel != null) {
+                              //       Get.to(DetailApparel(
+                              //               apparel: selectedApparel))
+                              //           ?.then((value) {
+                              //         // Di sini Anda dapat melakukan apa yang perlu setelah kembali dari DetailApparel.
+                              //         // Contohnya, jika Anda perlu memperbarui data cart, Anda bisa memanggil getList().
+                              //         getList();
+                              //       });
+                              //     } else {
+                              //       // Handle jika objek Apparel tidak ditemukan.
+                              //       // Misalnya, Anda bisa menampilkan pesan kesalahan atau tindakan lain.
+                              //       print('Produk tidak ditemukan.');
+                              //     }
+                              //   }
+                              // },
+
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(
+                                  0,
+                                  index == 0 ? 16 : 8,
+                                  16,
+                                  index == _cListCart.list.length - 1 ? 16 : 8,
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.white,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          offset: Offset(0, 0),
+                                          blurRadius: 6,
+                                          color: Colors.black26),
+                                    ]),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        bottomLeft: Radius.circular(20),
+                                      ),
+                                      child: FadeInImage(
+                                        height: 90,
+                                        width: 80,
+                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            const AssetImage(Asset.imageBox),
+                                        image: NetworkImage(dataCart.image!),
+                                        imageErrorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            height: 90,
+                                            width: 80,
+                                            alignment: Alignment.center,
+                                            child:
+                                                const Icon(Icons.broken_image),
+                                          );
+                                        },
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              dataCart.name!,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            // Dibagian bawah ini di hilangkan bagian ${dataCart.colors}
+                                            Row(
+                                              children: [
+                                                Text('Ukuran : '),
+                                                Text(
+                                                  '${dataCart.size}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                const Text('Jumlah : '),
+                                                Text(
+                                                  dataCart.quantity.toString(),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    // color: Asset.colorPrimary,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  '\Rp.${dataCart.price} ',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      color: Asset.colorPrimary,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(
+                                                  width: 16,
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                })
-            : const Center(
-                child: Text('empty'),
-              ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }
+            } else {
+              return const Center(
+                child: Text('Kosong'),
+              );
+            }
+          }),
+        ),
       ),
       bottomNavigationBar: GetBuilder(
           init: CListCart(),
@@ -395,7 +396,7 @@ class _ListCartState extends State<ListCart> {
                       width: 8,
                     ),
                     Obx(() => Text(
-                          '\Rp ' + _cListCart.total.toStringAsFixed(2),
+                          '\Rp ${_cListCart.total.toStringAsFixed(0)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -422,7 +423,7 @@ class _ListCartState extends State<ListCart> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 10),
                           child: Text(
-                            'Order Now',
+                            'Pesan Sekarang',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
@@ -434,3 +435,5 @@ class _ListCartState extends State<ListCart> {
     );
   }
 }
+
+fetchApparelById(String? idApparel) {}

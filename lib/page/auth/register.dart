@@ -19,7 +19,7 @@ class Register extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _obsecure = true.obs;
 
-  Register({super.key});
+  Register();
 
   void checkEmail() async {
     try {

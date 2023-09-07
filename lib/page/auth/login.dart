@@ -19,7 +19,7 @@ class Login extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _obsecure = true.obs;
 
-  Login({super.key});
+  Login({Key? key}) : super(key: key);
 
   void login() async {
     try {

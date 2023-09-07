@@ -1,20 +1,28 @@
 import 'dart:convert';
 
 import 'package:project_ecommerce_tugas_akhir/config/asset.dart';
+import 'package:project_ecommerce_tugas_akhir/event/event_pref.dart';
 import 'package:project_ecommerce_tugas_akhir/page/detail_apparel.dart';
-import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
-import 'package:project_ecommerce_tugas_akhir/page/list_cart_restore.dart';
-import 'package:project_ecommerce_tugas_akhir/page/search_apparel.dart';
+
+// import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
+// import 'package:project_ecommerce_tugas_akhir/page/list_cart_restore.dart';
+// import '../../../backup/search_apparel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../config/api.dart';
+import '../../controller/c_list_cart.dart';
 import '../../model/apparel.dart';
+import '../../model/user.dart';
+import '../list_cart.dart';
 
 class FragmentHome extends StatelessWidget {
-  var _controllerSearch = TextEditingController();
+  final _controllerSearch = TextEditingController();
+  final _cListCart = Get.put(CListCart());
+  FragmentHome({Key? key}) : super(key: key);
 
   Future<List<Apparel>> getPopular() async {
     List<Apparel> listApparelPopular = [];
@@ -64,14 +72,18 @@ class FragmentHome extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Find Your Style',
+                  'Cari Gaya Mu!',
                   style: TextStyle(
                       color: Asset.colorTextTile,
                       fontWeight: FontWeight.bold,
                       fontSize: 30),
                 ),
                 IconButton(
-                    onPressed: () => Get.to(ListCart()),
+                    onPressed: () async {
+                      _cListCart.fecthListCart();
+                      Get.to(const ListCart(),
+                          arguments: _cListCart.fecthListCart());
+                    },
                     icon: const Icon(
                       Icons.shopping_cart,
                       color: Asset.colorTextTile,
@@ -80,19 +92,19 @@ class FragmentHome extends StatelessWidget {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              'Get The Best of The Best Shoes',
+              'Dapatkan apparel terbaik',
               style: TextStyle(fontWeight: FontWeight.w300, fontSize: 16),
             ),
           ),
           const SizedBox(
-            height: 24,
+            height: 10,
           ),
-          buildSearch(),
-          const SizedBox(
-            height: 24,
-          ),
+          // buildSearch(),
+          // const SizedBox(
+          //   height: 24,
+          // ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -129,41 +141,42 @@ class FragmentHome extends StatelessWidget {
     );
   }
 
-  Widget buildSearch() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: TextField(
-          controller: _controllerSearch,
-          decoration: InputDecoration(
-              prefixIcon: IconButton(
-                onPressed: () => Get.to(SearchApparel(
-                  searchQuery: _controllerSearch.text,
-                )),
-                icon: const Icon(
-                  Icons.search,
-                  color: Asset.colorPrimary,
-                ),
-              ),
-              hintText: 'Search....',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  _controllerSearch.clear();
-                },
-                icon: const Icon(
-                  Icons.clear,
-                  color: Asset.colorPrimary,
-                ),
-              ),
-              border: styleBorder(),
-              enabledBorder: styleBorder(),
-              focusedBorder: styleBorder(),
-              disabledBorder: styleBorder(),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              fillColor: Asset.colorAccent,
-              filled: true),
-        ));
-  }
+  //INI ADALAH BAGIAN SEARCHING YANG DIRASA TIDAK BERGUNA
+  // Widget buildSearch() {
+  //   return Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 16),
+  //       child: TextField(
+  //         controller: _controllerSearch,
+  //         decoration: InputDecoration(
+  //             prefixIcon: IconButton(
+  //               onPressed: () => Get.to(SearchApparel(
+  //                 searchQuery: _controllerSearch.text,
+  //               )),
+  //               icon: const Icon(
+  //                 Icons.search,
+  //                 color: Asset.colorPrimary,
+  //               ),
+  //             ),
+  //             hintText: 'Search....',
+  //             suffixIcon: IconButton(
+  //               onPressed: () {
+  //                 _controllerSearch.clear();
+  //               },
+  //               icon: const Icon(
+  //                 Icons.clear,
+  //                 color: Asset.colorPrimary,
+  //               ),
+  //             ),
+  //             border: styleBorder(),
+  //             enabledBorder: styleBorder(),
+  //             focusedBorder: styleBorder(),
+  //             disabledBorder: styleBorder(),
+  //             contentPadding:
+  //                 const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //             fillColor: Asset.colorAccent,
+  //             filled: true),
+  //       ));
+  // }
 
   Widget buildPopular() {
     return FutureBuilder(
@@ -188,7 +201,7 @@ class FragmentHome extends StatelessWidget {
                     itemBuilder: (context, index) {
                       Apparel apparel = snapshot.data![index];
                       return GestureDetector(
-                        onTap: () => Get.to(DetaiApparel(
+                        onTap: () => Get.to(DetailApparel(
                           apparel: apparel,
                         )),
                         child: Container(
@@ -278,7 +291,7 @@ class FragmentHome extends StatelessWidget {
                                     ),
                                     Text(
                                       'Rp.${apparel.price}',
-                                      maxLines: 2,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
                                           fontSize: 20,
@@ -327,7 +340,7 @@ class FragmentHome extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Apparel apparel = snapshot.data![index];
                   return GestureDetector(
-                    onTap: () => Get.to(DetaiApparel(
+                    onTap: () => Get.to(DetailApparel(
                       apparel: apparel,
                     )),
                     child: Container(
@@ -372,7 +385,6 @@ class FragmentHome extends StatelessWidget {
                               },
                             ),
                           ),
-                          
                           Expanded(
                             child: Padding(
                               padding:
@@ -391,46 +403,46 @@ class FragmentHome extends StatelessWidget {
                                   const SizedBox(
                                     height: 4,
                                   ),
-                                  // Row(
-                                  //     children: [
-                                  //       RatingBar.builder(
-                                  //         initialRating: apparel.rating,
-                                  //         minRating: 1,
-                                  //         direction: Axis.horizontal,
-                                  //         allowHalfRating: true,
-                                  //         itemCount: 5,
-                                  //         itemPadding:
-                                  //             const EdgeInsets.symmetric(
-                                  //                 horizontal: 0),
-                                  //         itemBuilder: (context, _) =>
-                                  //             const Icon(
-                                  //           Icons.star,
-                                  //           color: Colors.amber,
-                                  //         ),
-                                  //         onRatingUpdate: (rating) {},
-                                  //         ignoreGestures: true,
-                                  //         itemSize: 20,
-                                  //         unratedColor: Colors.grey,
-                                  //       ),
-                                  //       const SizedBox(
-                                  //         width: 8,
-                                  //       ),
-                                  //       Text('(${apparel.rating})')
-                                  //     ],
-                                  //   ),
-                                  Container(
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Text(
-                                    
-                                      '${apparel.tags!.join(', ')}',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Asset.colorPrimary,
-                                      ),
+                                  // DIBAWAH INI ADALAH BAGIAN RATING BAR
+                                  Row(
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: apparel.rating,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 0),
+                                          itemBuilder: (context, _) =>
+                                              const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          onRatingUpdate: (rating) {},
+                                          ignoreGestures: true,
+                                          itemSize: 20,
+                                          unratedColor: Colors.grey,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Text('(${apparel.rating})')
+                                      ],
                                     ),
-                                  ),
+                                  // Container(
+                                  //   padding: EdgeInsets.only(top:5),
+                                  //   child: Text(
+                                  //     '${apparel.tags!.join(', ')}',
+                                  //     maxLines: 2,
+                                  //     overflow: TextOverflow.ellipsis,
+                                  //     style: const TextStyle(
+                                  //       fontSize: 14,
+                                  //       color: Asset.colorPrimary,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   const SizedBox(
                                     height: 4,
                                   ),

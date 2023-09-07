@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 class Asset {
   static const colorBackground = Colors.lightBlueAccent;
   static const colorPrimary = Colors.red;
-  static const colorAccent = Colors.white;
+  static const colorAccent = Colors.black12;
   static const colorTextTile = Colors.black;
   static const colorBorder = Colors.yellow;
   static const colorWhiteText = Colors.white;

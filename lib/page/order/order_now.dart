@@ -14,8 +14,8 @@ class OrderNow extends StatelessWidget {
   OrderNow(
       {required this.listShop, required this.total, required this.listIdCart});
 
-  final List<String> _listDelivery = ['JNE', 'JNT', 'Si Cepat'];
-  final List<String> _listPayment = ['Alfamart', 'Transfer Bank', 'ApparelPay'];
+  final List<String> _listDelivery = ['Pihak Toko'];
+  final List<String> _listPayment = ['Transfer Bank'];
   final COrderNow _cOrderNow = Get.put(COrderNow());
   var _controllerNote = TextEditingController();
   @override
@@ -24,7 +24,7 @@ class OrderNow extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Asset.colorPrimary,
         titleSpacing: 0,
-        title: Text('Order Now'),
+        title: Text('Pesan Sekarang'),
       ),
       body: ListView(
         children: [
@@ -35,7 +35,7 @@ class OrderNow extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Delivery',
+              'Pengiriman',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -60,7 +60,7 @@ class OrderNow extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Payment',
+              'Pembayaran',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -85,7 +85,7 @@ class OrderNow extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Note',
+              'Catatan',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -94,7 +94,7 @@ class OrderNow extends StatelessWidget {
             child: TextField(
               controller: _controllerNote,
               decoration: InputDecoration(
-                  hintText: 'Your note..',
+                  hintText: 'Catatanmu..',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                   focusedBorder: OutlineInputBorder(
@@ -129,7 +129,7 @@ class OrderNow extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        '\$ ${total.toStringAsFixed(2)}',
+                        '\Rp ${total.toStringAsFixed(0)}',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -137,7 +137,7 @@ class OrderNow extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        'Pay Now',
+                        'Bayar Sekarang',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

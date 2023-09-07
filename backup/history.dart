@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:project_ecommerce_tugas_akhir/controller/c_history.dart';
 import 'package:project_ecommerce_tugas_akhir/page/order/detail_order.dart';
 
-import '../../config/api.dart';
-import '../../controller/c_user.dart';
-import '../../model/order.dart';
+import '../lib/config/api.dart';
+import '../lib/controller/c_user.dart';
+import '../lib/model/order.dart';
 
 class History extends StatefulWidget {
   @override
@@ -71,7 +71,7 @@ class _HistoryState extends State<History> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0 ,
-        title: const Text('Hostory'),
+        title: const Text('Pemesanan Sebelumnya'),
         backgroundColor: Asset.colorPrimary,
         actions: [
           GetBuilder(

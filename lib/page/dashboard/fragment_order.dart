@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:project_ecommerce_tugas_akhir/controller/c_user.dart';
 import 'package:http/http.dart' as http;
-import 'package:project_ecommerce_tugas_akhir/page/order/history.dart';
+// import 'package:project_ecommerce_tugas_akhir/page/order/history.dart';
 
 import '../../config/api.dart';
 import '../../config/asset.dart';
@@ -13,6 +13,8 @@ import '../../model/order.dart';
 import '../order/detail_order.dart';
 
 class FragmentOrder extends StatefulWidget {
+  const FragmentOrder({Key? key}) : super(key: key);
+
   @override
   State<FragmentOrder> createState() => _FragmentOrderState();
 }
@@ -49,27 +51,27 @@ class _FragmentOrderState extends State<FragmentOrder> {
             padding: const EdgeInsets.fromLTRB(16, 24, 8, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Order',
+              children: const [
+                Text(
+                  'Pemesanan',
                   style: TextStyle(
                       color: Asset.colorTextTile,
                       fontWeight: FontWeight.bold,
                       fontSize: 30),
                 ),
-                IconButton(
-                    onPressed: () => Get.to(History()),
-                    icon: const Icon(
-                      Icons.history,
-                      color: Asset.colorTextTile,
-                    )),
+                // IconButton(
+                //     onPressed: () => Get.to(History()),
+                //     icon: const Icon(
+                //       Icons.history,
+                //       color: Asset.colorTextTile,
+                //     )),
               ],
             ),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Transaction you do',
+              'Transaksi yang kamu lakukan',
               style: TextStyle(fontWeight: FontWeight.w300, fontSize: 16),
             ),
           ),
@@ -77,7 +79,7 @@ class _FragmentOrderState extends State<FragmentOrder> {
     ]);
   }
 
-   Widget buildListOrder() {
+  Widget buildListOrder() {
     return FutureBuilder(
         future: getOrder(),
         builder: (context, AsyncSnapshot<List<Order>> snapshot) {
@@ -88,7 +90,7 @@ class _FragmentOrderState extends State<FragmentOrder> {
           }
           if (snapshot.data == null) {
             return const Center(
-              child: Text('Empty'),
+              child: Text('Kosong'),
             );
           }
           if (snapshot.data!.length > 0) {
@@ -102,9 +104,10 @@ class _FragmentOrderState extends State<FragmentOrder> {
             itemBuilder: (context, index) {
               Order order = listOrder[index];
               return ListTile(
-                onTap: () => Get.to(DetailOrder(order: order))!.then((value) => setState(() {})),
+                onTap: () {Get.to(DetailOrder(order:order))!.then((value) => setState(() {}));
+                },
                 contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                title: Text('\$ ${order.total}',style: TextStyle(fontSize: 16,color: Asset.colorPrimary,fontWeight: FontWeight.bold),),
+                title: Text('\Rp ${order.total}',style: TextStyle(fontSize: 16,color: Asset.colorPrimary,fontWeight: FontWeight.bold),),
                 trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                   children: [
@@ -122,7 +125,7 @@ class _FragmentOrderState extends State<FragmentOrder> {
               );
             });
           } else {
-            return const Center(child: Text('Empty'));
+            return const Center(child: Text('Kosong'));
           }
         });
   }

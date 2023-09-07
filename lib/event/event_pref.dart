@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
@@ -10,6 +11,8 @@ class EventPref {
     if (stringUser != null) {
       Map<String, dynamic> mapUser = jsonDecode(stringUser);
       user = User.fromJson(mapUser);
+      var idUser = mapUser['id_user'];
+      print(idUser);
     }
     return user;
   }

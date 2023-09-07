@@ -7,7 +7,6 @@ import 'package:project_ecommerce_tugas_akhir/page/dashboard/dashboard.dart';
 import '../../config/asset.dart';
 
 class TransactionSuccess extends StatelessWidget {
-  const TransactionSuccess({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +17,10 @@ class TransactionSuccess extends StatelessWidget {
       child: Scaffold(
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Transaction\nSuccess',
+                'Transaksi\nSukses',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Asset.colorTextTile,

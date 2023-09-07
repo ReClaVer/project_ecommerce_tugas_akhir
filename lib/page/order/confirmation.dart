@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,16 +26,18 @@ class Confirmation extends StatelessWidget {
   final String payment;
   final String note;
   Confirmation(
-      {super.key,
+      {Key? key,
       required this.listShop,
       required this.listIdCart,
       required this.total,
       required this.delivery,
       required this.payment,
-      required this.note});
+      required this.note})
+      : super(key: key);
 
   final RxList<int> _imageByte = <int>[].obs;
   final RxString _imageName = ''.obs;
+  Rx<File?> image = Rx<File?>(null);
 
   void setImage(Uint8List newImage) => _imageByte.value = newImage;
   Uint8List get imageByte => Uint8List.fromList(_imageByte);
@@ -44,13 +48,46 @@ class Confirmation extends StatelessWidget {
 
   void PickImage() async {
     final pickedFile =
-        await ImagePicker().getImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      final bytes = await pickedFile.readAsBytes();
-      setImage(bytes);
-      setImageName(path.basename(pickedFile.path));
-      print(imageByte);
+      image.value = File(pickedFile.path);
+      _imageName.value = image.value!.path.split('/').last;
     }
+  }
+
+  Future<void> postOrder()async{
+    var request = http.MultipartRequest('POST',Uri.parse(Api.addOrder));
+    Map<String, String> headers = {'Content-Type': 'application/'};
+    request.fields['id_user'] = _cUser.user.idUser.toString();
+    request.fields['date_time'] = DateTime.now().toString();
+    request.fields['delivery'] = delivery;
+    request.fields['id_order'] = '1';
+    request.fields['image'] = imageName;
+    request.fields['payment'] = payment;
+    request.fields['note'] = note;
+    request.fields['total'] = total.toStringAsFixed(0);
+    if(image.value != null){
+      request.files.add(
+        http.MultipartFile('image_path', image.value!.readAsBytes().asStream(), image.value!.lengthSync(), filename: imageName)
+      );
+    }
+
+    request.headers.addAll(headers);
+    try{
+      var res = await request.send();
+      if(res.statusCode == 200){
+        var responBody = await res.stream.bytesToString();
+        var resJson = jsonDecode(responBody);
+        print(resJson);
+        Get.to(TransactionSuccess());
+          listIdCart.forEach((idCart) => deleteCart(idCart));
+      }else{
+        infoMessage.snackbar(Get.context!, 'Failed add Order');
+      }
+    }catch (e){
+      print(e);
+    }
+    
   }
 
   Future<void> addOrder() async {
@@ -108,7 +145,7 @@ class Confirmation extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Add Transfer Photo',
+              'Masukkan Bukti Transfer',
               style: TextStyle(
                   color: Asset.colorTextTile,
                   fontWeight: FontWeight.bold,
@@ -127,7 +164,7 @@ class Confirmation extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   child: Text(
-                    'PICK IMAGE',
+                    'Masukkan Gambar',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -140,31 +177,23 @@ class Confirmation extends StatelessWidget {
                 constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height * 0.3,
                     maxWidth: MediaQuery.of(context).size.width * 0.8),
-                child: imageByte.length > 0
-                    ? Image.memory(
-                        imageByte,
-                        fit: BoxFit.contain,
-                      )
-                    : Placeholder())),
+                child: image.value == null
+                    ? Container()
+                    : Image.file(
+                        image.value!,
+                        fit: BoxFit.cover,
+                      ))),
             SizedBox(
               height: 30,
             ),
-            // Container(
-            //   width: MediaQuery.of(context).size.width - 70,
-            //   height: 200,
-            //   decoration: BoxDecoration(
-            //       border: Border.all(width: 1, color: Colors.black),
-            //       borderRadius: BorderRadius.circular(12)),
-            // ),
             Obx(() => Material(
                   elevation: 8,
-                  color:
-                      imageByte.length > 0 ? Asset.colorPrimary : Colors.grey,
+                  color: image.value != 0 ? Asset.colorPrimary : Colors.grey,
                   borderRadius: BorderRadius.circular(30),
                   child: InkWell(
-                    onTap: imageByte.length > 0
+                    onTap: image.value != null
                         ? () {
-                            addOrder();
+                            postOrder();
                           }
                         : null,
                     borderRadius: BorderRadius.circular(30),
@@ -172,7 +201,7 @@ class Confirmation extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       child: Text(
-                        'CONFIRMATION',
+                        'Konfirmasi',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

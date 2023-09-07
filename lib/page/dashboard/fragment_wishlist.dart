@@ -91,17 +91,15 @@ class _FragmentWishlistState extends State<FragmentWishlist> {
                 itemBuilder: (context, index) {
                   Wishlist wishlist = snapshot.data![index];
                   Apparel apparel = Apparel(
-                      colors: wishlist.colors,
                       idApparel: wishlist.idApparel,
                       image: wishlist.image,
                       name: wishlist.name,
                       price: wishlist.price,
                       rating: wishlist.rating,
                       sizes: wishlist.sizes,
-                      description: wishlist.description,
-                      tags: wishlist.tags);
+                      description: wishlist.description,);
                   return GestureDetector(
-                    onTap: () => Get.to(DetaiApparel(
+                    onTap: () => Get.to(DetailApparel(
                       apparel: apparel,
                     ))!
                         .then((value) => setState(
@@ -160,15 +158,15 @@ class _FragmentWishlistState extends State<FragmentWishlist> {
                                   const SizedBox(
                                     height: 8,
                                   ),
-                                  Text(
-                                    '${apparel.tags!.join(', ')}',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Asset.colorPrimary,
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   '${apparel.tags!.join(', ')}',
+                                  //   maxLines: 2,
+                                  //   overflow: TextOverflow.ellipsis,
+                                  //   style: const TextStyle(
+                                  //     fontSize: 14,
+                                  //     color: Asset.colorPrimary,
+                                  //   ),
+                                  // ),
                                   const SizedBox(
                                     height: 4,
                                   ),

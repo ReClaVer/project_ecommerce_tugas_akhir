@@ -11,15 +11,15 @@ import '../../config/api.dart';
 import '../../model/order.dart';
 
 class DetailOrder extends StatefulWidget {
-     final Order order;
-    DetailOrder({required this.order});
+    final Order order;
+    const DetailOrder({Key? key, required this.order}) : super(key: key);
 
   @override
   State<DetailOrder> createState() => _DetailOrderState();
 }
 
 class _DetailOrderState extends State<DetailOrder> {
-    RxString _arrived = ''.obs;
+    final RxString _arrived = ''.obs;
 
     String get arrived => _arrived.value;
 
@@ -28,14 +28,14 @@ class _DetailOrderState extends State<DetailOrder> {
     void dialogConfirmArrived () async {
       if (widget.order.arrived!='Arrived') {
     var response = await Get.dialog(AlertDialog(
-        title: Text('Set Arrived'),
-        content: Text('Has your order arrived?'),
+        title: Text('Tanda Terima'),
+        content: Text('Apakah barangmu sudah diterima?'),
         actions: [
-          TextButton(onPressed: ()=>Get.back(), child: Text('No')),
-          TextButton(onPressed: ()=>Get.back(result: 'Yes'), child: Text('Yes')),
+          TextButton(onPressed: ()=>Get.back(), child: Text('Belum')),
+          TextButton(onPressed: ()=>Get.back(result: 'arrived'), child: Text('Sudah')),
         ],
       ));
-      if (response=='yes') {
+      if (response=='succes') {
         setArrived();
       }
     }
@@ -50,7 +50,7 @@ class _DetailOrderState extends State<DetailOrder> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         if (responseBody['success']) {
-         updateArrived('Arrived');
+        updateArrived('success');
         }
       }
     } catch (e) {
@@ -86,13 +86,13 @@ class _DetailOrderState extends State<DetailOrder> {
                 child: Row(
                   children: [
                     
-                    Text('Arrived',style: TextStyle(
+                    Text('Diterima',style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey[600],
                     ),),
-                    SizedBox(width: 8,),
-                    Obx(() => arrived == 'Arrived' ? Icon(Icons.check_circle,color: Asset.colorPrimary,):Icon(Icons.help,color: Colors.grey,)),
+                    const SizedBox(width: 2,),
+                    Obx(() => arrived == 'arrived' ? const Icon(Icons.check_circle,color: Asset.colorPrimary,):Icon(Icons.help,color: Colors.grey,)),
                   ],
                 ),
                 
@@ -109,42 +109,49 @@ class _DetailOrderState extends State<DetailOrder> {
             children: [
               buildListShop(),
               SizedBox(height: 16,),
-              buildTitle('Delivery'),
+              buildTitle('Pengiriman'),
               SizedBox(height: 8,),
               buildContent(widget.order.delivery),
               buildListShop(),
               SizedBox(height: 16,),
-              buildTitle('Payment'),
+              buildTitle('Pembayaran'),
               SizedBox(height: 8,),
               buildContent(widget.order.payment),
               buildListShop(),
               SizedBox(height: 16,),
-              buildTitle('Note'),
+              buildTitle('Catatan'),
               SizedBox(height: 8,),
               buildContent(widget.order.note??''),
               buildListShop(),
               SizedBox(height: 16,),
               buildTitle('Total'),
               SizedBox(height: 8,),
-              buildContent('\$ ${widget.order.total}'),
+              buildContent('\Rp ${widget.order.total}'),
               buildListShop(),
               SizedBox(height: 16,),
-              buildTitle('Proof of Payment'),
+              buildTitle('Bukti Pembayaran'),
               SizedBox(height: 8,),
-              FadeInImage(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  fit: BoxFit.fitWidth,
-                  placeholder: const AssetImage(Asset.imageBox),
-                  image: NetworkImage(Api.hostImage + widget.order.image),
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 50,
-                      width: 50,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.broken_image),
-                    );
-                  },
+              Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                width: MediaQuery.of(context).size.width * 0.8,
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: NetworkImage(widget.order.image))
                 ),
+              ),
+              // FadeInImage(
+              //     width: MediaQuery.of(context).size.width * 0.7,
+              //     fit: BoxFit.fitWidth,
+              //     placeholder: const AssetImage(Asset.imageBox),
+              //     image: NetworkImage(Api.hostImage + widget.order.image!),
+              //     imageErrorBuilder: (context, error, stackTrace) {
+              //       return Container(
+              //         height: 50,
+              //         width: 50,
+              //         alignment: Alignment.center,
+              //         child: const Icon(Icons.broken_image),
+              //       );
+              //     },
+              //   ),
               SizedBox(height: 16,),
             ],
           ),
@@ -162,7 +169,7 @@ return Text(title,style: TextStyle(fontSize: 16),);
 }
 
   Widget buildListShop() {
-    List<String> stringListShop = widget.order.listShop.split('||');
+    String stringListShop = widget.order.listShop;
     return Column(
       children: List.generate(stringListShop.length, (index) {
         Map<String, dynamic> item = jsonDecode(stringListShop[index]);
@@ -228,8 +235,7 @@ return Text(title,style: TextStyle(fontSize: 16),);
                         height: 8,
                       ),
                       Text(
-                        '\$ ' +
-                            (item['item_total'] as double).toStringAsFixed(2),
+                        '\Rp'+(item['item_total'] as double).toStringAsFixed(0),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

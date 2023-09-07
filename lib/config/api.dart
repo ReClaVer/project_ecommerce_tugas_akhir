@@ -1,6 +1,7 @@
 class Api {
-  static const _host = 'http://192.168.8.102/api_ecommerce';
+  // static const _host = 'https://srv1091-files.hstgr.io/ed51013ef4efcc68/files/public_html/api_ecommerce';
   // static const _host = 'https://distroapp.epizy.com';
+  static const _host  = 'http://10.127.230.146/api_ecommerce';
   // static const _host = 'http://sql204.epizy.com';
   static const _hostCart = '$_host/cart';
   static const _hostOrder = '$_host/order';
@@ -20,7 +21,7 @@ class Api {
   static const addOrder = '$_hostOrder/add.php';
   static const deleteOrder = '$_hostOrder/delete.php';
   static const getHistory = '$_hostOrder/get_history.php';
-  static const getOrder = '$_hostOrder/get_order.php';
+  static const getOrder = '$_hostOrder/order.php';
   static const setArrived = '$_hostOrder/set_arrived.php';
 
   //apparel
@@ -39,3 +40,7 @@ class Api {
   static const deleteWishlist = '$_hostWishlist/delete.php';
   static const getWishlist = '$_hostWishlist/get.php';
 }
+
+
+
+

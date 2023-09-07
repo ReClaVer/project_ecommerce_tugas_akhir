@@ -6,7 +6,7 @@ import 'package:project_ecommerce_tugas_akhir/page/dashboard/dashboard.dart';
 import 'asset.dart';
 
 class Splashscreen extends StatefulWidget {
-  const Splashscreen({super.key});
+  const Splashscreen();
 
   @override
   State<Splashscreen> createState() => _SplashscreenState();

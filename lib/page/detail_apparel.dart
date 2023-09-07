@@ -5,25 +5,63 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:project_ecommerce_tugas_akhir/config/api.dart';
 import 'package:project_ecommerce_tugas_akhir/controller/c_detail.dart';
-import 'package:project_ecommerce_tugas_akhir/page/list_cart.dart';
+
 import 'package:project_ecommerce_tugas_akhir/widget/info_message.dart';
 
 import '../config/asset.dart';
+import '../controller/c_list_cart.dart';
 import '../controller/c_user.dart';
 import '../model/apparel.dart';
+import '../model/cart.dart';
+import 'list_cart.dart';
 
-class DetaiApparel extends StatefulWidget {
+class DetailApparel extends StatefulWidget {
   final Apparel? apparel;
-  DetaiApparel({this.apparel});
+  DetailApparel({this.apparel});
 
   @override
-  State<DetaiApparel> createState() => _DetaiApparelState();
+  State<DetailApparel> createState() => _DetailApparelState();
 }
 
-class _DetaiApparelState extends State<DetaiApparel> {
+class _DetailApparelState extends State<DetailApparel> {
   final _CDetailApparel = Get.put(CDetailApparel());
-
+  final _cUser = Get.put(CUser());
+  final _cListCart = Get.put(CListCart());
   final _CUser = Get.put(CUser());
+
+  Future<void> getList() async {
+    List<Cart> listCart = [];
+    try {
+      var response = await http.post(Uri.parse(Api.getCart), body: {
+        'id_user': _cUser.user.idUser.toString(),
+      });
+      if (response.statusCode == 200) {
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['success']) {
+          (responseBody['data'] as List).forEach((element) {
+            listCart.add(Cart.fromJson(element));
+          });
+        }
+        _cListCart.setList(listCart);
+      }
+    } catch (e) {
+      print(e);
+    }
+    countTotal();
+  }
+
+  void countTotal() {
+    double total = 0.0;
+    if (_cListCart.selected.isNotEmpty) {
+      _cListCart.list.forEach((cart) {
+        if (_cListCart.selected.contains(cart.idCart)) {
+          double itemTotal = cart.price * cart.quantity;
+          total += itemTotal;
+        }
+      });
+    }
+    _cListCart.setTotal(total);
+  }
 
   void checkWishlist() async {
     try {
@@ -77,15 +115,27 @@ class _DetaiApparelState extends State<DetaiApparel> {
     }
   }
 
-  void addCart() async {
+// INI ADALAH METHOD LAMA YANG ERROR
+  Future<void> addCart() async {
     try {
-      var response = await http.post(Uri.parse(Api.addCart), body: {
-        'id_user': _CUser.user.idUser.toString(),
-        'id_apparel': widget.apparel!.idApparel.toString(),
-        'quantity': _CDetailApparel.quantity.toString(),
-        'size': widget.apparel!.sizes[_CDetailApparel.size],
-        'color': widget.apparel!.colors[_CDetailApparel.color]
-      });
+      var response = await http.post(
+        Uri.parse(Api.addCart),
+        body: {
+          'id_user': _CUser.user.idUser.toString(),
+          'id_apparel': widget.apparel!.idApparel.toString(),
+          'quantity': _CDetailApparel.quantity.toString(),
+          'size': _CDetailApparel.size == 0
+              ? 'S'
+              : _CDetailApparel.size == 1
+                  ? 'M'
+                  : _CDetailApparel.size == 2
+                      ? 'L'
+                      : _CDetailApparel.size == 3
+                          ? 'XL'
+                          : 'XXL',
+          'price': widget.apparel!.price.toString(),
+        },
+      );
 
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
@@ -94,7 +144,7 @@ class _DetaiApparelState extends State<DetaiApparel> {
           infoMessage.snackbar(context, 'Apparel has added to cart');
         } else {
           // ignore: use_build_context_synchronously
-          infoMessage.snackbar(context, 'Failed add apparel to cart');
+          infoMessage.snackbar(context, 'Apparel has not added to cart');
         }
       }
     } catch (e) {
@@ -162,8 +212,13 @@ class _DetaiApparelState extends State<DetaiApparel> {
                           color: Asset.colorPrimary)),
                 ),
                 IconButton(
-                    onPressed: () => Get.to(ListCart()),
-                    icon: Icon(Icons.shopping_cart, color: Asset.colorPrimary)),
+                    onPressed: () async {
+                      _cListCart.fecthListCart();
+                      Get.to(const ListCart(),
+                          arguments: _cListCart.fecthListCart());
+                    },
+                    icon: const Icon(Icons.shopping_cart,
+                        color: Asset.colorPrimary)),
               ],
             ),
           ),
@@ -214,7 +269,7 @@ class _DetaiApparelState extends State<DetaiApparel> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 30,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -256,22 +311,22 @@ class _DetaiApparelState extends State<DetaiApparel> {
                     const SizedBox(
                       height: 8,
                     ),
-                    Text(
-                      widget.apparel!.tags!.join(', '),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
+                    // Text(
+                    //   widget.apparel!.tags!.join(', '),
+                    //   maxLines: 2,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: const TextStyle(
+                    //     fontSize: 16,
+                    //   ),
+                    // ),
                     const SizedBox(
-                      height: 16,
+                      height: 6,
                     ),
                     Text(
                       'Rp ${widget.apparel!.price}',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 30,
                         color: Asset.colorPrimary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -353,8 +408,83 @@ class _DetaiApparelState extends State<DetaiApparel> {
             const SizedBox(
               height: 20,
             ),
+
+            ////-- COLOR PAGE --////
+            // const Text(
+            //   'Color',
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     color: Colors.grey,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 8,
+            // ),
+            // Wrap(
+            //   spacing: 8,
+            //   children: List.generate(widget.apparel!.colors.length, (index) {
+            //     return Obx(() => GestureDetector(
+            //           onTap: () => _CDetailApparel.setColor(index),
+            //           child: FittedBox(
+            //             child: Container(
+            //               decoration: BoxDecoration(
+            //                 borderRadius: BorderRadius.circular(30),
+            //                 border: Border.all(
+            //                   width: 2,
+            //                   color: _CDetailApparel.color == index
+            //                       ? Asset.colorPrimary
+            //                       : Colors.grey,
+            //                 ),
+            //                 color: _CDetailApparel.color == index
+            //                     ? Asset.colorAccent
+            //                     : Colors.white,
+            //               ),
+            //               padding: const EdgeInsets.symmetric(
+            //                 horizontal: 16,
+            //                 vertical: 4,
+            //               ),
+            //               alignment: Alignment.center,
+            //               child: Text(
+            //                 widget.apparel!.colors[index],
+            //                 style: const TextStyle(
+            //                   fontSize: 16,
+            //                   color: Colors.grey,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ));
+            //   }),
+            // ),
+
+            ////-- DESKRIPSI PAGE --////
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.push(context,
+            //         MaterialPageRoute(builder: (context) => DescriptionPage()));
+            //   },
+            //   child: Row(
+            //     children: const [
+            //       Icon(
+            //         Icons.description_outlined,
+            //         color: Asset.colorPrimary,
+            //       ),
+            //       Text(
+            //         "Description",
+            //         style: TextStyle(
+            //             color: Colors.black,
+            //             fontWeight: FontWeight.w400,
+            //             fontSize: 18),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const Text(
-              'Color',
+              'Description',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey,
@@ -364,80 +494,9 @@ class _DetaiApparelState extends State<DetaiApparel> {
             const SizedBox(
               height: 8,
             ),
-            Wrap(
-              spacing: 8,
-              children: List.generate(widget.apparel!.colors.length, (index) {
-                return Obx(() => GestureDetector(
-                      onTap: () => _CDetailApparel.setColor(index),
-                      child: FittedBox(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              width: 2,
-                              color: _CDetailApparel.color == index
-                                  ? Asset.colorPrimary
-                                  : Colors.grey,
-                            ),
-                            color: _CDetailApparel.color == index
-                                ? Asset.colorAccent
-                                : Colors.white,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.apparel!.colors[index],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ));
-              }),
+            Text(
+              widget.apparel!.description!,
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => DescriptionPage()));
-              },
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.description_outlined,
-                    color: Asset.colorPrimary,
-                  ),
-                  Text(
-                    "Description",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
-            // Text(
-            //   'Description',
-            //   style: TextStyle(
-            //     fontSize: 18,
-            //     color: Colors.grey,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 8,
-            // ),
-            // Text(
-            //   widget.apparel!.description!,
-            // ),
             const SizedBox(
               height: 30,
             ),
@@ -446,7 +505,10 @@ class _DetaiApparelState extends State<DetaiApparel> {
               color: Asset.colorPrimary,
               borderRadius: BorderRadius.circular(30),
               child: InkWell(
-                onTap: () => addCart(),
+                onTap: () {
+                  addCart();
+                  print('bisa');
+                },
                 borderRadius: BorderRadius.circular(30),
                 child: Container(
                   alignment: Alignment.center,
@@ -475,7 +537,7 @@ class _DetaiApparelState extends State<DetaiApparel> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.all(12),
+            margin: const EdgeInsets.all(12),
             child: Text(widget.apparel!.description!),
           ),
         ),
